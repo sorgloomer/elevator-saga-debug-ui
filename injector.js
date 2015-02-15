@@ -56,17 +56,19 @@
         var userCounter = 0;
         self.$hege.updateUser = function($world, world, user, userAttached) {
             var $user = userAttached.$user;
-            if (self.$hege.options.aging) {
+            if (self.$hege.options.passengerColor) {
                 $user.css('color', ageColStr(world.elapsedTime - user.spawnTimestamp));
             } else {
                 $user.css('color', '');
             }
 
-            if (self.$hege.options.showInfo) {
+            if (self.$hege.options.passengerDestionation) {
                 if (!userAttached.$info) {
                     userAttached.$info = $(INFO_TEMPLATE);
                     userAttached.$info.children().text(''+user.destinationFloor);
-                    // userAttached.$info.css('top', (userCounter++%2) ? '20px' : '-20px');
+                    if (self.$hege.passengerDestionationPlacement) {
+                        userAttached.$info.css('top', (userCounter++%2) ? '20px' : '-20px');
+                    }
                     $user.append(userAttached.$info);
                 }
             } else {
@@ -80,14 +82,14 @@
 
         self.$hege.old_presentChallenge = self.$hege.old_presentChallenge || self.presentChallenge;
         self.presentChallenge = function($parent, challenge, app, world, worldController, challengeNum, challengeTempl) {
-            var fineSpeed = self.$hege.options.fineSpeed;
+            var fineSpeedAdjustment = self.$hege.options.fineSpeedAdjustment;
             var $challenge = $(riot.render(challengeTempl, {
                 challenge: challenge,
                 num: challengeNum,
-                timeScale: worldController.timeScale.toFixed(fineSpeed ? 3 : 0) + "x",
+                timeScale: worldController.timeScale.toFixed(fineSpeedAdjustment ? 3 : 0) + "x",
                 startButtonText: world.challengeEnded ? "<i class='fa fa-repeat'></i> Restart" : (worldController.isPaused ? "Start" : "Pause")
             }));
-            if (fineSpeed) {
+            if (fineSpeedAdjustment) {
                 $challenge.find('span').css('width', '80px');
             }
             $parent.html($challenge);
@@ -96,7 +98,7 @@
                 app.startStopOrRestart();
             });
             $parent.find(".timescale_increase").on("click", function(e) {
-                if (!fineSpeed) {
+                if (!fineSpeedAdjustment) {
                     e.preventDefault();
                     var timeScale = Math.round(worldController.timeScale * 1.618);
                     worldController.setTimeScale(timeScale);
@@ -108,7 +110,7 @@
                 }
             });
             $parent.find(".timescale_decrease").on("click", function(e) {
-                if (!fineSpeed) {
+                if (!fineSpeedAdjustment) {
                     e.preventDefault();
                     var timeScale = Math.round(worldController.timeScale / 1.618);
                     worldController.setTimeScale(timeScale);
@@ -147,9 +149,11 @@
     scheduleRemoveScript();
 
     self.$hege.setup = setup;
-    setup({
-        showInfo: true,
-        aging: true,
-        fineSpeed: true
+
+    self.$hege.setup({
+        passengerDestionation: true,
+        passengerDestionationPlacement: false,
+        passengerColor: true,
+        fineSpeedAdjustment: true
     });
 })(self, $, riot);
