@@ -36,7 +36,7 @@
             return colStr(colGrad(time, self.$hege.GRADIENT, COL_TMP));
         }
 
-        var INFO_TEMPLATE = '<span style="' +
+        var USER_INFO_TEMPLATE = '<span style="' +
             'position: absolute;' +
             'top: -20px;' +
             'left: -8px;' +
@@ -54,8 +54,8 @@
             'margin: auto;'+
             '"></span></span>';
         var userCounter = 0;
-        self.$hege.updateUser = function($world, world, user, userAttached) {
-            var $user = userAttached.$user;
+
+        function updateUser($world, world, $user, user, userAttached) {
             if (self.$hege.options.passengerColor) {
                 $user.css('color', ageColStr(world.elapsedTime - user.spawnTimestamp));
             } else {
@@ -64,7 +64,7 @@
 
             if (self.$hege.options.passengerDestionation) {
                 if (!userAttached.$info) {
-                    userAttached.$info = $(INFO_TEMPLATE);
+                    userAttached.$info = $(USER_INFO_TEMPLATE);
                     userAttached.$info.children().text(''+user.destinationFloor);
                     if (self.$hege.passengerDestionationPlacement) {
                         userAttached.$info.css('top', (userCounter++%2) ? '20px' : '-20px');
@@ -77,6 +77,56 @@
                     userAttached.$info = null;
                 }
             }
+        }
+
+        var ELEVATOR_INFO_TEMPLATE = '<span style="' +
+            'position: absolute;' +
+            'display: block;'+
+            'white-space: pre;'+
+            'top: 48px;' +
+            'left: -3px;' +
+            'width: 100%;' +
+            'color: white;' +
+            'background: black;' +
+            'border: 1px solid grey;' +
+            'padding: 2px;' +
+            'font-size: 10px;' +
+            'line-height: 10px;' +
+            'font-family: Arial, Helvetica, sans-serif;' +
+            '"></span>';
+
+        function updateElevator($world, world, $elevator, elevator, elevatorAttached) {
+            var tag = elevator.$$interface && elevator.$$interface.$$tag;
+            var $info = elevatorAttached.$info;
+            if (tag !== elevatorAttached.lastTag) {
+                elevatorAttached.lastTag = tag;
+                if ($info) {
+                    if (!tag) {
+                        $info.detach();
+                        $info = null;
+                    }
+                } else {
+                    if (tag) {
+                        $info = $(ELEVATOR_INFO_TEMPLATE);
+                        $elevator.append($info);
+                    }
+                }
+                elevatorAttached.$info = $info;
+            }
+
+            if (tag && $info) {
+                $info.text(tag);
+                var isTop = elevator.currentFloor < world.floors.length - 3;
+                $info.css('top', isTop ? '' : '48px');
+                $info.css('bottom', isTop ? '50px' : '');
+            }
+        }
+
+        self.$hege.old_asElevatorInterface = self.$hege.old_asElevatorInterface || self.asElevatorInterface;
+        self.asElevatorInterface = function(obj, elevator, floorCount) {
+            var result = self.$hege.old_asElevatorInterface.apply(self, arguments);
+            elevator.$$interface = result;
+            return result;
         };
 
 
@@ -127,13 +177,22 @@
         self.presentWorld = function ($world, world) {
             var result = self.$hege.old_presentWorld.apply(self, arguments);
             world.on('new_user', function (user) {
-                var userAttached = {
-                    $user: $world.children().last()
-                };
+                var $user = $world.children().last();
+                var userAttached = { $user: $user };
                 user.on('new_state', function () {
-                    self.$hege.updateUser($world, world, user, userAttached);
+                    updateUser($world, world, $user, user, userAttached);
                 });
             });
+
+            var allElevators = $world.find('.elevator');
+            world.elevators.forEach(function(elevator, idx) {
+                var $elevator = allElevators.eq(idx);
+                var elevatorAttached = { $elevator: $elevator };
+                elevator.on('new_state', function() {
+                    updateElevator($world, world, $elevator, elevator, elevatorAttached);
+                });
+            });
+
             return result;
         };
     }
