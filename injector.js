@@ -38,7 +38,7 @@
 
         var USER_INFO_TEMPLATE = '<span style="' +
             'position: absolute;' +
-            'top: -20px;' +
+            'top: 20px;' +
             'left: -8px;' +
             'width: 26px;' +
             'text-align: center;' +
@@ -62,13 +62,20 @@
                 $user.css('color', '');
             }
 
-            if (self.$hege.options.passengerDestionation) {
+            var pdest = self.$hege.options.passengerDestionation;
+            if (pdest) {
                 if (!userAttached.$info) {
                     userAttached.$info = $(USER_INFO_TEMPLATE);
                     userAttached.$info.children().text(''+user.destinationFloor);
-                    if (self.$hege.passengerDestionationPlacement) {
+
+                    if (pdest === 'mix') {
                         userAttached.$info.css('top', (userCounter++%2) ? '20px' : '-20px');
+                    } else if (pdest === 'below') {
+                        userAttached.$info.css('top', '20px');
+                    } else /* if (pdest === 'above') */ {
+                        userAttached.$info.css('top', '-20px');
                     }
+
                     $user.append(userAttached.$info);
                 }
             } else {
@@ -210,8 +217,7 @@
     self.$hege.setup = setup;
 
     self.$hege.setup({
-        passengerDestionation: true,
-        passengerDestionationPlacement: false,
+        passengerDestionation: 'above',
         passengerColor: true,
         fineSpeedAdjustment: true
     });
