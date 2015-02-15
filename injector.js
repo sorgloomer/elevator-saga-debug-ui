@@ -137,6 +137,23 @@
             return result;
         };
 
+        function stringContains(a, b) {
+            return a.indexOf(b) >= 0;
+        }
+
+        self.$hege.old_presentFeedback = self.$hege.old_presentFeedback || self.presentFeedback;
+        self.presentFeedback = function($parent, feedbackTempl, world, title, message, url) {
+            var result = self.$hege.old_presentFeedback.apply(self, arguments);
+            if (self.$hege.options.autoRetry) {
+                if (stringContains(title, 'failed')) {
+                    setTimeout(function () {
+                        $("#button_apply").trigger('click');
+                    }, 500);
+                }
+            }
+            return result;
+        };
+
 
         self.$hege.old_presentChallenge = self.$hege.old_presentChallenge || self.presentChallenge;
         self.presentChallenge = function($parent, challenge, app, world, worldController, challengeNum, challengeTempl) {
@@ -220,6 +237,7 @@
     self.$hege.setup({
         passengerDestionation: 'above',
         passengerColor: true,
-        fineSpeedAdjustment: true
+        fineSpeedAdjustment: true,
+        autoRetry: true
     });
 })(self, $, riot);
