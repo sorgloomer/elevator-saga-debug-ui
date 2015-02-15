@@ -89,15 +89,16 @@
 
         var ELEVATOR_INFO_TEMPLATE = '<span style="' +
             'position: absolute;' +
+            'box-sizing: border-box;' +
             'display: block;'+
             'white-space: pre;'+
             'top: 48px;' +
-            'left: -3px;' +
+            'left: 0;' +
             'width: 100%;' +
             'color: white;' +
             'background: black;' +
             'border: 1px solid grey;' +
-            'padding: 2px;' +
+            'padding: 3px;' +
             'font-size: 10px;' +
             'line-height: 10px;' +
             'font-family: Arial, Helvetica, sans-serif;' +
