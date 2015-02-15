@@ -5,10 +5,11 @@
         self.$hege.options = opt || {};
 
         var COL_COMPONENTS = 3;
-        var RED = [255, 0, 0], GREEN = [0, 255, 0], BLUE = [0, 0, 255],
-            CYAN = [0, 255, 255], WHITE = [255, 255, 255],
+        var RED = [255, 0, 0], GREEN = [0, 255, 0], WHITE = [255, 255, 255],
             BLACK = [0, 0, 0], YELLOW = [255, 255, 0];
         var COL_TMP = [0, 0, 0];
+        var ELEVATOR_TAG_MAX_SIZE = 2;
+
         self.$hege.GRADIENT = [[0, WHITE], [5, GREEN], [10, YELLOW], [15, RED], [20, BLACK]];
 
         function lerpCol(t, c1, c2, dst) {
@@ -123,7 +124,7 @@
 
             if (tag && $info) {
                 $info.text(tag);
-                var isTop = elevator.currentFloor < world.floors.length - 3;
+                var isTop = elevator.currentFloor < world.floors.length - ELEVATOR_TAG_MAX_SIZE;
                 $info.css('top', isTop ? '' : '48px');
                 $info.css('bottom', isTop ? '50px' : '');
             }
