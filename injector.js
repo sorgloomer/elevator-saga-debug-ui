@@ -98,9 +98,9 @@
             'color: white;' +
             'background: black;' +
             'border: 1px solid grey;' +
-            'padding: 3px;' +
+            'padding: 2px;' +
             'font-size: 10px;' +
-            'line-height: 10px;' +
+            'line-height: 12px;' +
             'font-family: Arial, Helvetica, sans-serif;' +
             '"></span>';
 
