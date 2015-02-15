@@ -10,9 +10,8 @@ WARNING
 =======
 
 Never run scripts found on the internet in your developer console unless you are
-completely confident about what you are doing.
-For more information see:
-[Wikipedia: Self-XSS](http://en.wikipedia.org/wiki/Self-XSS)
+completely confident about what you are doing.  
+For more information see [Wikipedia: Self-XSS](http://en.wikipedia.org/wiki/Self-XSS)
 
 
 Usage
